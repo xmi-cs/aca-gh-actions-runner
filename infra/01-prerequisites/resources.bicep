@@ -12,3 +12,12 @@ module acr '../modules/containerRegistry.bicep' = {
     tags: union(tags, { module: 'containerRegistry.bicep' })
   }
 }
+
+module acaEnv '../modules/containerAppEnvironment.bicep' = {
+  name: 'deploy-${suffix}-aca-env'
+  params: {
+    location: location
+    suffix: suffix
+    tags: union(tags, { module: 'containerAppEnvironment.bicep' })
+  }
+}
