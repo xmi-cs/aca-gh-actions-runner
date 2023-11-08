@@ -17,3 +17,5 @@ resource acaEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
     ]
   }
 }
+
+output acaEnvName string = acaEnv.name

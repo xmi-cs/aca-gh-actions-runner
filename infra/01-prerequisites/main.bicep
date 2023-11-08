@@ -26,7 +26,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 
 module resources 'resources.bicep' = {
   scope: rg
-  name: 'deploy-${suffix}-resources'
+  name: 'deploy-${suffix}-prerequisites-resources'
 
   params: {
     location: location

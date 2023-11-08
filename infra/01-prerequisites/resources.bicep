@@ -21,3 +21,6 @@ module acaEnv '../modules/containerAppEnvironment.bicep' = {
     tags: union(tags, { module: 'containerAppEnvironment.bicep' })
   }
 }
+
+output acrName string = acr.outputs.acrName
+output acaEnvName string = acaEnv.outputs.acaEnvName

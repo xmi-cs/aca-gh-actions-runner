@@ -40,15 +40,21 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
   name: 'ca-${suffix}'
   location: location
   tags: tags
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${acaMsi.id}': {}
+    }
+  }
   properties: {
     managedEnvironmentId: acaEnv.id
     configuration: {
       activeRevisionsMode: 'Single'
       registries: [
-        // {
-        //   server: acr.properties.loginServer
-        //   identity: acaMsi.id
-        // }
+        {
+          server: acr.properties.loginServer
+          identity: acaMsi.id
+        }
       ]
     }
     template: {
