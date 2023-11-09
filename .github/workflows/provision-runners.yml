@@ -47,6 +47,7 @@ jobs:
             acrName=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.acrName.value -o tsv)
             acaEnvName=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.acaEnvName.value -o tsv)
             echo "suffix=$suffix" >> $GITHUB_OUTPUT
+            echo "rgName=$rgName" >> $GITHUB_OUTPUT
             echo "acrName=$acrName" >> $GITHUB_OUTPUT
             echo "acaEnvName=$acaEnvName" >> $GITHUB_OUTPUT
       
