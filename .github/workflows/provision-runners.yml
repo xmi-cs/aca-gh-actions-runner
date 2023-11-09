@@ -15,24 +15,46 @@ jobs:
   provision-runners:
     runs-on: ubuntu-latest
     env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       ARM_USE_OIDC: true
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Generate JWT
-        id: generate_jwt
-        uses: tibdex/github-app-token@v1
+      - name: Generate access token
+        id: generate-access-token
+        uses: actions/create-github-app-token@v1
         with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          app-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
       - name: Azure Login
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Get prerequisites outputs
+        id: get-prerequisites-outputs
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            suffix=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.suffix.value -o tsv)
+            rgName=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.rgName.value -o tsv)
+            acrName=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.acrName.value -o tsv)
+            acaEnvName=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.acaEnvName.value -o tsv)
+            echo "suffix=$suffix" >> $GITHUB_OUTPUT
+            echo "acrName=$acrName" >> $GITHUB_OUTPUT
+            echo "acaEnvName=$acaEnvName" >> $GITHUB_OUTPUT
+      
+      - name: Bicep deploy
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          resourceGroupName: ${{ steps.get-prerequisites-outputs.outputs.rgName }}
+          template: ./infra/02-app/main.bicep
+          parameters: suffix=${{ steps.get-prerequisites-outputs.outputs.suffix }} acrName=${{ steps.get-prerequisites-outputs.outputs.acrName }} acaEnvName=${{ steps.get-prerequisites-outputs.outputs.acaEnvName }} imageTag=1107.01
+          deploymentName: deploy-aca-gh-runners-dev-app

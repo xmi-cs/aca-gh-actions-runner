@@ -12,6 +12,9 @@ param containerCpu string = '0.25'
 param containerMemory string = '0.5Gi'
 param imageTag string
 
+@secure()
+param gitHubAccessToken string
+
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
   name: acrName
 }
@@ -66,6 +69,12 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
             cpu: json(containerCpu)
             memory: containerMemory
           }
+          env: [
+            {
+              name: 'ACCESS_TOKEN'
+              value: gitHubAccessToken
+            }
+          ]
         }
       ]
     }

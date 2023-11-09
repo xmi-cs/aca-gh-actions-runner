@@ -34,3 +34,8 @@ module resources 'resources.bicep' = {
     suffix: suffix
   }
 }
+
+output suffix string = suffix
+output acrName string = resources.outputs.acrName
+output acaEnvName string = resources.outputs.acaEnvName
+output rgName string = rg.name

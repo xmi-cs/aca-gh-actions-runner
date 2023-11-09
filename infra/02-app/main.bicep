@@ -5,13 +5,17 @@ param suffix string
 
 param acrName string
 param acaEnvName string
-param imageTag string = 'latest'
+param imageTag string
+
+@secure()
+param gitHubAccessToken string
 
 module resources 'resources.bicep' = {
   name: 'deploy-${suffix}-app-resources'
   params: {
     acaEnvName: acaEnvName
     acrName: acrName
+    gitHubAccessToken: gitHubAccessToken
     imageTag: imageTag
     location: location
     suffix: suffix
