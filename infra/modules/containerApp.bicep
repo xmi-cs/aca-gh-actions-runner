@@ -96,6 +96,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
         maxReplicas: 10
         rules: [
           {
+            name: 'github-runner-scaling-rule'
             custom: {
               type: 'github-runner-scaler'
               auth: [
