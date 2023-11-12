@@ -1,0 +1,24 @@
+name: Test self-hosted runners
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+    
+jobs:
+  test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - run: |
+          az account show
+          az group list --query '[].name' -o tsv
