@@ -65,7 +65,4 @@ jobs:
             imageTag=other.1111.01 
             gitHubAccessToken=${{ steps.generate-access-token.outputs.token }} 
             gitHubOrganization=${{ github.repository_owner }} 
-            # gitHubAppPrivateKey=<<EOL
-            # ${{ secrets.GH_APP_PRIVATE_KEY }}
-            # EOL
           deploymentName: deploy-aca-gh-runners-dev-app
