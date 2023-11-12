@@ -98,7 +98,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
           {
             name: 'github-runner-scaling-rule'
             custom: {
-              type: 'github-runner-scaler'
+              type: 'github-runner'
               auth: [
                 {
                   secretRef: 'github-app-private-key'
