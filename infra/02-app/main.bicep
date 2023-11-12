@@ -12,7 +12,7 @@ param gitHubAccessToken string
 param gitHubOrganization string
 
 @secure()
-param gitHubAppPrivateKey string
+param gitHubAppPrivateKey string = ''
 
 module resources 'resources.bicep' = {
   name: 'deploy-${suffix}-app-resources'
