@@ -94,7 +94,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
       scale: {
         minReplicas: 1
         maxReplicas: 10
-        rules: gitHubAppPrivateKey != null ? [
+        rules: gitHubAppPrivateKey != '' ? [
           {
             name: 'github-runner-scaling-rule'
             custom: {
