@@ -64,10 +64,10 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
         }
       ]
       secrets: [
-        {
-          name: 'github-app-private-key'
-          value: gitHubAppPrivateKey
-        }
+        // {
+        //   name: 'github-app-private-key'
+        //   value: gitHubAppPrivateKey
+        // }
       ]
     }
     template: {
