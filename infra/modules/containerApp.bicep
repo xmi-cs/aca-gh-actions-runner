@@ -101,6 +101,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               type: 'github-runner'
               auth: [
                 {
+                  triggerParameter: 'appKey'
                   secretRef: 'github-app-private-key'
                 }
               ]
