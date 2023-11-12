@@ -9,6 +9,7 @@ param imageTag string
 
 @secure()
 param gitHubAccessToken string
+param gitHubOrganization string
 
 module resources 'resources.bicep' = {
   name: 'deploy-${suffix}-app-resources'
@@ -16,6 +17,7 @@ module resources 'resources.bicep' = {
     acaEnvName: acaEnvName
     acrName: acrName
     gitHubAccessToken: gitHubAccessToken
+    gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location
     suffix: suffix

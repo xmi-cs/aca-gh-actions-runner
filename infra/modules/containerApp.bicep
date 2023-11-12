@@ -14,6 +14,7 @@ param imageTag string
 
 @secure()
 param gitHubAccessToken string
+param gitHubOrganization string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
   name: acrName
@@ -74,11 +75,15 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               name: 'ACCESS_TOKEN'
               value: gitHubAccessToken
             }
+            {
+              name: 'ORGANIZATION'
+              value: gitHubOrganization
+            }
           ]
         }
       ]
       scale: {
-        minReplicas: 1
+        minReplicas: 0
         maxReplicas: 10
       }
     }
