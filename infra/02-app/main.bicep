@@ -11,6 +11,9 @@ param imageTag string
 param gitHubAccessToken string
 param gitHubOrganization string
 
+@secure()
+param gitHubAppPrivateKey string
+
 module resources 'resources.bicep' = {
   name: 'deploy-${suffix}-app-resources'
   params: {
@@ -18,6 +21,7 @@ module resources 'resources.bicep' = {
     acrName: acrName
     gitHubAccessToken: gitHubAccessToken
     gitHubOrganization: gitHubOrganization
+    gitHubAppPrivateKey: gitHubAppPrivateKey
     imageTag: imageTag
     location: location
     suffix: suffix

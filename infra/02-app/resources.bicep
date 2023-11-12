@@ -12,6 +12,9 @@ param imageTag string = 'latest'
 param gitHubAccessToken string
 param gitHubOrganization string
 
+@secure()
+param gitHubAppPrivateKey string
+
 module aca '../modules/containerApp.bicep' = {
   name: 'deploy-${suffix}-aca'
   params: {
@@ -19,6 +22,7 @@ module aca '../modules/containerApp.bicep' = {
     acrName: acrName
     gitHubAccessToken: gitHubAccessToken
     gitHubOrganization: gitHubOrganization
+    gitHubAppPrivateKey: gitHubAppPrivateKey
     imageTag: imageTag
     location: location
     suffix: suffix

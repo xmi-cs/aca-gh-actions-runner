@@ -16,6 +16,9 @@ param imageTag string
 param gitHubAccessToken string
 param gitHubOrganization string
 
+@secure()
+param gitHubAppPrivateKey string
+
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
   name: acrName
 }
@@ -60,6 +63,12 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
           identity: acaMsi.id
         }
       ]
+      secrets: [
+        {
+          name: 'github-app-private-key'
+          value: gitHubAppPrivateKey
+        }
+      ]
     }
     template: {
       containers: [
@@ -85,6 +94,22 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
       scale: {
         minReplicas: 1
         maxReplicas: 10
+        rules: [
+          {
+            custom: {
+              type: 'github-runner-scaler'
+              auth: [
+                {
+                  secretRef: 'github-app-private-key'
+                }
+              ]
+              metadata: {
+                ownerFromEnv: gitHubOrganization
+                runnerScopeFromEnv: 'org'
+              }
+            }
+          }
+        ]
       }
     }
   }
