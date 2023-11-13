@@ -63,12 +63,12 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
           identity: acaMsi.id
         }
       ]
-      secrets: [
-        // {
-        //   name: 'github-app-private-key'
-        //   value: gitHubAppPrivateKey
-        // }
-      ]
+      secrets: gitHubAppPrivateKey != '' ? [
+        {
+          name: 'github-app-private-key'
+          value: gitHubAppPrivateKey
+        }
+      ] : []
     }
     template: {
       containers: [
@@ -94,24 +94,24 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
       scale: {
         minReplicas: 1
         maxReplicas: 10
-        // rules: gitHubAppPrivateKey != '' ? [
-        //   {
-        //     name: 'github-runner-scaling-rule'
-        //     custom: {
-        //       type: 'github-runner'
-        //       auth: [
-        //         {
-        //           triggerParameter: 'appKey'
-        //           secretRef: 'github-app-private-key'
-        //         }
-        //       ]
-        //       metadata: {
-        //         ownerFromEnv: gitHubOrganization
-        //         runnerScopeFromEnv: 'org'
-        //       }
-        //     }
-        //   }
-        // ] : []
+        rules: gitHubAppPrivateKey != '' ? [
+          {
+            name: 'github-runner-scaling-rule'
+            custom: {
+              type: 'github-runner'
+              auth: [
+                {
+                  triggerParameter: 'appKey'
+                  secretRef: 'github-app-private-key'
+                }
+              ]
+              metadata: {
+                ownerFromEnv: gitHubOrganization
+                runnerScopeFromEnv: 'org'
+              }
+            }
+          }
+        ] : []
       }
     }
   }
