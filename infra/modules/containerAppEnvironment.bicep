@@ -3,6 +3,11 @@ param suffix string
 param tags {
   *: string
 }
+param lawName string
+
+resource law 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = {
+  name: lawName
+}
 
 resource acaEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
   name: 'cae-${suffix}'
@@ -15,6 +20,13 @@ resource acaEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
         workloadProfileType: 'Consumption'
       }
     ]
+    appLogsConfiguration: {
+      destination: 'log-analytics'
+      logAnalyticsConfiguration: {
+        customerId: law.properties.customerId
+        sharedKey: law.listKeys().primarySharedKey
+      }
+    }
   }
 }
 

@@ -28,6 +28,7 @@ module acaEnv '../modules/containerAppEnvironment.bicep' = {
     location: location
     suffix: suffix
     tags: union(tags, { module: 'containerAppEnvironment.bicep' })
+    lawName: law.outputs.lawName
   }
 }
 
