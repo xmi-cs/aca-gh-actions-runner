@@ -23,14 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Generate access token
-        id: generate-access-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-          skip-token-revoke: true
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -43,7 +35,7 @@ jobs:
         with:
           scope: subscription
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          template: ./infra/01-app/main.bicep
+          template: ./infra/01-prerequisites/main.bicep
           region: ${{ vars.AZURE_LOCATION }}
           parameters: >
             environment=dev
