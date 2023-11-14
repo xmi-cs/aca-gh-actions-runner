@@ -63,12 +63,12 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
           identity: acaMsi.id
         }
       ]
-      secrets: gitHubAppPrivateKey != '' ? [
+      secrets: [
         {
           name: 'github-app-private-key'
           value: gitHubAppPrivateKey
         }
-      ] : []
+      ]
     }
     template: {
       containers: [
@@ -94,7 +94,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
       scale: {
         minReplicas: 1
         maxReplicas: 10
-        rules: gitHubAppPrivateKey != '' ? [
+        rules: [
           {
             name: 'github-runner-scaling-rule'
             custom: {
@@ -111,7 +111,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               }
             }
           }
-        ] : []
+        ]
       }
     }
   }
