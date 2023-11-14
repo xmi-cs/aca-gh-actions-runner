@@ -68,6 +68,10 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
           name: 'github-app-private-key'
           value: gitHubAppPrivateKey
         }
+        {
+          name: 'github-access-token'
+          value: gitHubAccessToken
+        }
       ]
     }
     template: {
@@ -82,7 +86,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
           env: [
             {
               name: 'ACCESS_TOKEN'
-              value: gitHubAccessToken
+              secretRef: 'github-access-token'
             }
             {
               name: 'ORGANIZATION'
