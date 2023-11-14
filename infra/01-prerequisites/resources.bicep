@@ -13,6 +13,15 @@ module acr '../modules/containerRegistry.bicep' = {
   }
 }
 
+module law '../modules/logAnalytics.bicep' = {
+  name: 'deploy-${suffix}-law'
+  params: {
+    location: location
+    project: suffix
+    tags: union(tags, { module: 'logAnalytics.bicep' })
+  }
+}
+
 module acaEnv '../modules/containerAppEnvironment.bicep' = {
   name: 'deploy-${suffix}-aca-env'
   params: {
