@@ -44,6 +44,7 @@ jobs:
           scope: subscription
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           template: ./infra/01-app/main.bicep
+          region: ${{ vars.AZURE_LOCATION }}
           parameters: >
             environment=dev
             location=${{ vars.AZURE_LOCATION }}
