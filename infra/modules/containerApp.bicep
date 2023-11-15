@@ -113,7 +113,8 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               ]
               metadata: {
                 owner: gitHubOrganization
-                runnerScope: 'org'
+                runnerScope: 'repo'
+                repos: 'aca-gh-actions-runner'
                 applicationID: gitHubAppId
                 installationID: gitHubInstallationId
               }
