@@ -110,8 +110,8 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
                 }
               ]
               metadata: {
-                ownerFromEnv: gitHubOrganization
-                runnerScopeFromEnv: 'org'
+                owner: gitHubOrganization
+                runnerScope: 'org'
               }
             }
           }
