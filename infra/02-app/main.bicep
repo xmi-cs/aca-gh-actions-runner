@@ -11,6 +11,8 @@ param imageTag string
 param gitHubAccessToken string
 param gitHubOrganization string
 
+param gitHubAppId string
+param gitHubInstallationId string
 @secure()
 param gitHubAppPrivateKey string
 
@@ -21,6 +23,8 @@ module resources 'resources.bicep' = {
     acrName: acrName
     gitHubAccessToken: gitHubAccessToken
     gitHubOrganization: gitHubOrganization
+    gitHubAppId: gitHubAppId
+    gitHubInstallationId: gitHubInstallationId
     gitHubAppPrivateKey: gitHubAppPrivateKey
     imageTag: imageTag
     location: location

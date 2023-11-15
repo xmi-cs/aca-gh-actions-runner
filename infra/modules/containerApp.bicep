@@ -16,6 +16,8 @@ param imageTag string
 param gitHubAccessToken string
 param gitHubOrganization string
 
+param gitHubAppId string
+param gitHubInstallationId string
 @secure()
 param gitHubAppPrivateKey string
 
@@ -112,6 +114,8 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               metadata: {
                 owner: gitHubOrganization
                 runnerScope: 'org'
+                applicationID: gitHubAppId
+                installationID: gitHubInstallationId
               }
             }
           }
