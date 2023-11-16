@@ -12,9 +12,6 @@ param imageTag string = 'latest'
 param gitHubAccessToken string
 param gitHubOrganization string
 
-@secure()
-param gitHubPat string
-
 module aca '../modules/containerApp.bicep' = {
   name: 'deploy-${suffix}-aca'
   params: {
@@ -22,7 +19,6 @@ module aca '../modules/containerApp.bicep' = {
     acrName: acrName
     gitHubAccessToken: gitHubAccessToken
     gitHubOrganization: gitHubOrganization
-    gitHubPat: gitHubPat
     imageTag: imageTag
     location: location
     suffix: suffix

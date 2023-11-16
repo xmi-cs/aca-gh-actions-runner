@@ -16,9 +16,6 @@ param imageTag string
 param gitHubAccessToken string
 param gitHubOrganization string
 
-@secure()
-param gitHubPat string
-
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
   name: acrName
 }
@@ -64,10 +61,6 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
         }
       ]
       secrets: [
-        {
-          name: 'github-pat'
-          value: gitHubPat
-        }
         {
           name: 'github-access-token'
           value: gitHubAccessToken
