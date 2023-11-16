@@ -65,7 +65,5 @@ jobs:
             imageTag=other.1111.01 
             gitHubAccessToken=${{ steps.generate-access-token.outputs.token }} 
             gitHubOrganization=${{ github.repository_owner }} 
-            gitHubAppId=${{ vars.GH_APP_ID }}
-            gitHubInstallationId=${{ vars.GH_INSTALLATION_ID }}
             gitHubPat=${{ secrets.GH_PAT }}
           deploymentName: deploy-aca-gh-runners-dev-app
