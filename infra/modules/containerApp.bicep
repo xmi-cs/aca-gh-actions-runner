@@ -19,7 +19,7 @@ param gitHubOrganization string
 param gitHubAppId string
 param gitHubInstallationId string
 @secure()
-param gitHubAppPrivateKey string
+param gitHubPat string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
   name: acrName
@@ -67,8 +67,8 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
       ]
       secrets: [
         {
-          name: 'github-app-private-key'
-          value: gitHubAppPrivateKey
+          name: 'github-pat'
+          value: gitHubPat
         }
         {
           name: 'github-access-token'
@@ -107,16 +107,13 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               type: 'github-runner'
               auth: [
                 {
-                  triggerParameter: 'appKey'
+                  triggerParameter: 'personalAccessToken'
                   secretRef: 'github-app-private-key'
                 }
               ]
               metadata: {
                 owner: gitHubOrganization
-                runnerScope: 'repo'
-                repos: 'aca-gh-actions-runner'
-                applicationID: gitHubAppId
-                installationID: gitHubInstallationId
+                runnerScope: 'org'
               }
             }
           }

@@ -67,5 +67,5 @@ jobs:
             gitHubOrganization=${{ github.repository_owner }} 
             gitHubAppId=${{ vars.GH_APP_ID }}
             gitHubInstallationId=${{ vars.GH_INSTALLATION_ID }}
-            gitHubAppPrivateKey="${{ secrets.GH_APP_PRIVATE_KEY }}"
+            gitHubPat=${{ secrets.GH_PAT }}
           deploymentName: deploy-aca-gh-runners-dev-app

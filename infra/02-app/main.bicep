@@ -14,7 +14,7 @@ param gitHubOrganization string
 param gitHubAppId string
 param gitHubInstallationId string
 @secure()
-param gitHubAppPrivateKey string
+param gitHubPat string
 
 module resources 'resources.bicep' = {
   name: 'deploy-${suffix}-app-resources'
@@ -25,7 +25,7 @@ module resources 'resources.bicep' = {
     gitHubOrganization: gitHubOrganization
     gitHubAppId: gitHubAppId
     gitHubInstallationId: gitHubInstallationId
-    gitHubAppPrivateKey: gitHubAppPrivateKey
+    gitHubPat: gitHubPat
     imageTag: imageTag
     location: location
     suffix: suffix

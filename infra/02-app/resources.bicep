@@ -15,7 +15,7 @@ param gitHubOrganization string
 param gitHubAppId string
 param gitHubInstallationId string
 @secure()
-param gitHubAppPrivateKey string
+param gitHubPat string
 
 module aca '../modules/containerApp.bicep' = {
   name: 'deploy-${suffix}-aca'
@@ -26,7 +26,7 @@ module aca '../modules/containerApp.bicep' = {
     gitHubOrganization: gitHubOrganization
     gitHubAppId: gitHubAppId
     gitHubInstallationId: gitHubInstallationId
-    gitHubAppPrivateKey: gitHubAppPrivateKey
+    gitHubPat: gitHubPat
     imageTag: imageTag
     location: location
     suffix: suffix
