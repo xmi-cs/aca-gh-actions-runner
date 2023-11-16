@@ -12,8 +12,6 @@ param imageTag string = 'latest'
 param gitHubAccessToken string
 param gitHubOrganization string
 
-param gitHubAppId string
-param gitHubInstallationId string
 @secure()
 param gitHubPat string
 
@@ -24,8 +22,6 @@ module aca '../modules/containerApp.bicep' = {
     acrName: acrName
     gitHubAccessToken: gitHubAccessToken
     gitHubOrganization: gitHubOrganization
-    gitHubAppId: gitHubAppId
-    gitHubInstallationId: gitHubInstallationId
     gitHubPat: gitHubPat
     imageTag: imageTag
     location: location

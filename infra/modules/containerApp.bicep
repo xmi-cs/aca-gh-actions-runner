@@ -16,8 +16,6 @@ param imageTag string
 param gitHubAccessToken string
 param gitHubOrganization string
 
-param gitHubAppId string
-param gitHubInstallationId string
 @secure()
 param gitHubPat string
 
@@ -108,7 +106,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               auth: [
                 {
                   triggerParameter: 'personalAccessToken'
-                  secretRef: 'github-app-private-key'
+                  secretRef: 'github-pat'
                 }
               ]
               metadata: {
