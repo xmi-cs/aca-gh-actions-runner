@@ -89,6 +89,14 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               name: 'ORG_NAME'
               value: gitHubOrganization
             }
+            {
+              name: 'EPHEMERAL'
+              value: '1'
+            }
+            {
+              name: 'RUNNER_NAME_PREFIX'
+              value: suffix
+            }
           ]
         }
       ]
