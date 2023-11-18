@@ -19,6 +19,6 @@ module aca '../modules/containerApp.bicep' = {
     imageTag: imageTag
     location: location
     suffix: suffix
-    tags: union(resourceGroup().tags, { module: '01-prerequisites/resources.bicep' })
+    tags: union(resourceGroup().tags, { module: 'containerApp.bicep' })
   }
 }
