@@ -82,6 +82,10 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               secretRef: 'github-access-token'
             }
             {
+              name: 'RUNNER_SCOPE'
+              value: 'org'
+            }
+            {
               name: 'ORG_NAME'
               value: gitHubOrganization
             }
