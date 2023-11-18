@@ -1,5 +1,3 @@
-@minLength(1)
-@description('Primary location for all resources')
 param location string = resourceGroup().location
 param suffix string
 
@@ -11,16 +9,16 @@ param imageTag string
 param gitHubAccessToken string
 param gitHubOrganization string
 
-module resources 'resources.bicep' = {
-  name: 'deploy-${suffix}-app-resources'
+module aca '../modules/containerApp.bicep' = {
+  name: 'deploy-${suffix}-aca'
   params: {
-    acaEnvName: acaEnvName
+    acaEnvironmentName: acaEnvName
     acrName: acrName
     gitHubAccessToken: gitHubAccessToken
     gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location
     suffix: suffix
-    tags: union(resourceGroup().tags, { module: '02-app/resources.bicep' })
+    tags: union(resourceGroup().tags, { module: '01-prerequisites/resources.bicep' })
   }
 }
