@@ -39,7 +39,6 @@ jobs:
           template: ./infra/01-prerequisites/main.bicep
           region: ${{ vars.AZURE_LOCATION }}
           parameters: >
-            environment=dev
             location=${{ vars.AZURE_LOCATION }}
           deploymentName: deploy-aca-gh-runners-dev-prerequisites
 
