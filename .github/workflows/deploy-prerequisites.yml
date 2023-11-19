@@ -58,3 +58,6 @@ jobs:
           gh variable set ACA_ENV_NAME --body ${{ steps.bicep-deploy.outputs.acaEnvName }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-access-token.outputs.token }}
+
+      - run: |
+          az acr build -r ${{ vars.ACR_NAME }} -g ${{ vars.RG_NAME }} -f src/Dockerfile.from-base -t runners/github/linux:from-base .
