@@ -48,7 +48,7 @@ jobs:
             suffix=${{ vars.SUFFIX }} 
             acrName=${{ vars.ACR_NAME }} 
             acaEnvName=${{ vars.ACA_ENV_NAME }} 
-            imageTag=azcli 
+            imageTag=from-base 
             gitHubAccessToken=${{ steps.generate-access-token.outputs.token }} 
             gitHubOrganization=${{ github.repository_owner }} 
           deploymentName: deploy-aca-gh-runners-dev-app
