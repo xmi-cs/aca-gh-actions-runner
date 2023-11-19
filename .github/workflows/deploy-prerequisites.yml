@@ -61,3 +61,4 @@ jobs:
 
       - run: |
           az acr build -r ${{ vars.ACR_NAME }} -g ${{ vars.RG_NAME }} -f src/Dockerfile.from-base -t runners/github/linux:from-base .
+        working-directory: src
