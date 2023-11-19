@@ -12,7 +12,7 @@ defaults:
     working-directory: infra
     
 jobs:
-  provision-runners:
+  deploy-prerequisites:
     runs-on: ubuntu-latest
     env:
       ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
