@@ -1,5 +1,5 @@
 param location string
-param suffix string
+param project string
 param tags {
   *: string
 }
@@ -25,7 +25,7 @@ resource acaEnv 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
 }
 
 resource acaMsi 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: 'id-${suffix}'
+  name: 'id-${project}'
   location: location
 }
 
@@ -41,7 +41,7 @@ resource acaAcrPull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 
 resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
-  name: 'ca-${suffix}'
+  name: 'ca-${project}'
   location: location
   tags: tags
   identity: {
@@ -95,7 +95,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
             }
             {
               name: 'RUNNER_NAME_PREFIX'
-              value: suffix
+              value: project
             }
           ]
         }

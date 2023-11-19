@@ -1,5 +1,5 @@
 param location string = resourceGroup().location
-param suffix string
+param project string
 
 param acrName string
 param acaEnvName string
@@ -10,7 +10,7 @@ param gitHubAccessToken string
 param gitHubOrganization string
 
 module aca '../modules/containerApp.bicep' = {
-  name: 'deploy-${suffix}-aca'
+  name: 'deploy-${project}-aca'
   params: {
     acaEnvironmentName: acaEnvName
     acrName: acrName
@@ -18,7 +18,7 @@ module aca '../modules/containerApp.bicep' = {
     gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location
-    suffix: suffix
+    project: project
     tags: union(resourceGroup().tags, { module: 'containerApp.bicep' })
   }
 }

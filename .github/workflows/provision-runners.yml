@@ -45,7 +45,7 @@ jobs:
           resourceGroupName: ${{ vars.RG_NAME }}
           template: ./infra/02-app/main.bicep
           parameters: >
-            suffix=${{ vars.SUFFIX }} 
+            project=${{ vars.PROJECT }} 
             acrName=${{ vars.ACR_NAME }} 
             acaEnvName=${{ vars.ACA_ENV_NAME }} 
             imageTag=from-base 

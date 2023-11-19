@@ -1,32 +1,32 @@
 param location string
-param suffix string
+param project string
 param tags {
   *: string
 }
 
 module acr '../modules/containerRegistry.bicep' = {
-  name: 'deploy-${suffix}-acr'
+  name: 'deploy-${project}-acr'
   params: {
     location: location
-    suffix: suffix
+    project: project
     tags: union(tags, { module: 'containerRegistry.bicep' })
   }
 }
 
 module law '../modules/logAnalytics.bicep' = {
-  name: 'deploy-${suffix}-law'
+  name: 'deploy-${project}-law'
   params: {
     location: location
-    project: suffix
+    project: project
     tags: union(tags, { module: 'logAnalytics.bicep' })
   }
 }
 
 module acaEnv '../modules/containerAppEnvironment.bicep' = {
-  name: 'deploy-${suffix}-aca-env'
+  name: 'deploy-${project}-aca-env'
   params: {
     location: location
-    suffix: suffix
+    project: project
     tags: union(tags, { module: 'containerAppEnvironment.bicep' })
     lawName: law.outputs.lawName
   }
