@@ -6,10 +6,6 @@ on:
 permissions:
   id-token: write
   contents: read
-
-defaults:
-  run:
-    working-directory: infra
     
 jobs:
   deploy-prerequisites:
@@ -36,7 +32,7 @@ jobs:
         with:
           scope: subscription
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-          template: ./infra/01-prerequisites/main.bicep
+          template: infra/01-prerequisites/main.bicep
           region: ${{ vars.AZURE_LOCATION }}
           parameters: >
             location=${{ vars.AZURE_LOCATION }}
@@ -59,5 +55,5 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-access-token.outputs.token }}
 
       - run: |
-          az acr build -r ${{ steps.bicep-deploy.outputs.acrName }} -g ${{ steps.bicep-deploy.outputs.rgName }} -f Dockerfile.from-base -t runners/github/linux:from-base .
-        working-directory: src
+          az acr build -r ${{ steps.bicep-deploy.outputs.acrName }} -g ${{ steps.bicep-deploy.outputs.rgName }} -f src/Dockerfile.from-base -t runners/github/linux:from-base src
+        name: Build and push runner image to the registry
