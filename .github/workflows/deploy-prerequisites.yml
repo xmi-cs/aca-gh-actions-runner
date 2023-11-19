@@ -31,6 +31,7 @@ jobs:
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Bicep deploy
+        id: bicep-deploy
         uses: azure/arm-deploy@v1
         with:
           scope: subscription
@@ -41,3 +42,10 @@ jobs:
             environment=dev
             location=${{ vars.AZURE_LOCATION }}
           deploymentName: deploy-aca-gh-runners-dev-prerequisites
+
+      - name: Update GitHub variables
+        run: |
+          gh variable set SUFFIX --body ${{ steps.bicep-deploy.outputs.suffix }}
+          gh variable set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
+          gh variable set ACR_NAME --body ${{ steps.bicep-deploy.outputs.acrName }}
+          gh variable set ACA_ENV_NAME --body ${{ steps.bicep-deploy.outputs.acaEnvName }}

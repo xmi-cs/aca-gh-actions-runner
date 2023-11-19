@@ -37,31 +37,17 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      
-      - name: Get prerequisites outputs
-        id: get-prerequisites-outputs
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            suffix=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.suffix.value -o tsv)
-            rgName=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.rgName.value -o tsv)
-            acrName=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.acrName.value -o tsv)
-            acaEnvName=$(az deployment sub show -n deploy-aca-gh-runners-dev-prerequisites --query properties.outputs.acaEnvName.value -o tsv)
-            echo "suffix=$suffix" >> $GITHUB_OUTPUT
-            echo "rgName=$rgName" >> $GITHUB_OUTPUT
-            echo "acrName=$acrName" >> $GITHUB_OUTPUT
-            echo "acaEnvName=$acaEnvName" >> $GITHUB_OUTPUT
 
       - name: Bicep deploy
         uses: azure/arm-deploy@v1
         with:
           scope: resourcegroup
-          resourceGroupName: ${{ steps.get-prerequisites-outputs.outputs.rgName }}
+          resourceGroupName: ${{ vars.RG_NAME }}
           template: ./infra/02-app/main.bicep
           parameters: >
-            suffix=${{ steps.get-prerequisites-outputs.outputs.suffix }} 
-            acrName=${{ steps.get-prerequisites-outputs.outputs.acrName }} 
-            acaEnvName=${{ steps.get-prerequisites-outputs.outputs.acaEnvName }} 
+            suffix=${{ vars.SUFFIX }} 
+            acrName=${{ vars.ACR_NAME }} 
+            acaEnvName=${{ vars.ACA_ENV_NAME }} 
             imageTag=azcli 
             gitHubAccessToken=${{ steps.generate-access-token.outputs.token }} 
             gitHubOrganization=${{ github.repository_owner }} 
