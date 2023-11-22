@@ -62,7 +62,33 @@ Next workflow to run is `Create and register self-hosted runners`. This one gene
 
 > The previous workflow also generates an access token but it's less noticeable, it's a short-lived token for setting the variables
 
-Once the workflow has finished you should see the Container App in your resource group. In the _Revisions_ panel of the Container App, you should see an active revision and in the _Log Stream_ panel, a message indicating the successful connection to GitHub.
+Once the workflow has finished you should see the Container App in your resource group. In the _Revisions_ panel of the Container App, you should see an active revision and in the _Log Stream_ panel, a message indicating the successful connection to GitHub:
+```
+Runner reusage is disabled
+Obtaining the token of the runner
+Ephemeral option is enabled
+Configuring
+--------------------------------------------------------------------------------
+|        ____ _ _   _   _       _          _        _   _                      |
+|       / ___(_) |_| | | |_   _| |__      / \   ___| |_(_) ___  _ __  ___      |
+|      | |  _| | __| |_| | | | | '_ \    / _ \ / __| __| |/ _ \| '_ \/ __|     |
+|      | |_| | | |_|  _  | |_| | |_) |  / ___ \ (__| |_| | (_) | | | \__ \     |
+|       \____|_|\__|_| |_|\__,_|_.__/  /_/   \_\___|\__|_|\___/|_| |_|___/     |
+|                                                                              |
+|                       Self-hosted runner registration                        |
+|                                                                              |
+--------------------------------------------------------------------------------
+# Authentication
+√ Connected to GitHub
+# Runner Registration
+√ Runner successfully added
+√ Runner connection is good
+# Runner settings
+√ Settings Saved.
+√ Connected to GitHub
+Current runner version: '2.311.0'
+2023-11-22 15:48:14Z: Listening for Jobs
+```
 
 ## Test the self-hosted runners
 To test the runner, simply run the `Test self-hosted runners` workflow. This is a simple workflow that connects to Azure and run Azure CLI commands to output the account used and the list of resource groups in the subscription.
