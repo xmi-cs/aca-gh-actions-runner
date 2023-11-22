@@ -32,5 +32,39 @@ Then you need to _install_ your GitHub App to grant the permissions defined abov
 Lastly, in the settings of your fork, go to _Secrets and variables_, and _Actions_. Create a secret named `GH_APP_PRIVATE_KEY` with your GitHub App private key (the content of the `.pem` file) and a variable named `GH_APP_ID` with the GitHub App id as the value.
 
 ### Connect GitHub with Azure
+To grant access to your Azure subscription to the GitHub Action runners, you need to create a service principal with the _owner_ role to your subscription (or _contributor_ and _user access administrator_ roles).  
+
+> This use of privileged role(s) is necessary to create a role assignment in the Bicep code. If you have an Entra P1 or P2 license your can also create a custom role for finer-grained control  
+
+To create your service principal, follow the instructions [here](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux#use-the-azure-login-action-with-openid-connect), until you have added federated credentials and create the following variables:
+- `AZURE_TENANT_ID` with your tenant id
+- `AZURE_CLIENT_ID` with your application (client) id
+- `AZURE_SUBSCRIPTION_ID` with your subscription id
+- `AZURE_LOCATION` with the Azure region you want to create the resources in (not related to the GitHub-Azure connection but better set it while already setting variables)
+
+> Note that no client secret is required thanks to OpenID Connect and federated credentials
+
+Now that everything is set-up, you can start to deploy some resources.
+
+## Deploy the prerequisites
+The first workflow to run is `Deploy prerequisites` from the Actions tab in your fork. It will create the following resources in your Azure subscription:
+- A resource group named `rg-aca-gh-runners`
+- A Container Apps environment
+- A Container registry
+- A Log Analytics workspace
+
+It will also build a container image from the Dockerfile [here](/src/Dockerfile.from-base) which is based on the work from this great [repo](https://github.com/myoung34/docker-github-actions-runner) and push it to your registry with the tag `runners/github/linux:from-base`.  
+
+Lastly it sets a few deployment outputs as variables so that the next workflow can re-use them.
+
+## Deploy the runners
+Next workflow to run is `Create and register self-hosted runners`. This one generates an access token as the GitHub App, and pass it as an input to a Bicep deployment. This deployment provisions the Container App inside the Container Apps Environment, using the container image built and pushed by the previous workflow.
+
+> The previous workflow also generates an access token but it's less noticeable, it's a short-lived token for setting the variables
+
+Once the workflow has finished you should see the Container App in your resource group. In the _Revisions_ panel of the Container App, you should see an active revision and in the _Log Stream_ panel, a message indicating the successful connection to GitHub.
 
 ## Test the self-hosted runners
+To test the runner, simply run the `Test self-hosted runners` workflow. This is a simple workflow that connects to Azure and run Azure CLI commands to output the account used and the list of resource groups in the subscription.
+
+> The most important thing on this workflow is the use of the `runs-on: self-hosted` property of the single job. It means that the job has to run on a self-hosted runner, whereas the previous workflow run on runners managed by GitHub (using the `runs-on: ubuntu-latest` property).
