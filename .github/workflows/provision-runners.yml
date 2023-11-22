@@ -51,4 +51,4 @@ jobs:
             imageTag=from-base 
             gitHubAccessToken=${{ steps.generate-access-token.outputs.token }} 
             gitHubOrganization=${{ github.repository_owner }} 
-          deploymentName: deploy-aca-gh-runners-dev-app
+          deploymentName: deploy-aca-gh-runners-app
