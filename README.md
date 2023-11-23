@@ -23,6 +23,7 @@ The important settings are the permissions, set them as follow:
   - Set `Metadata` to `Read-only` (it should be selected by default)
   - Set `Variables` to `Read and write`.
 - In _Organization permissions_:
+  - Set `Administration` to `Read-only`
   - Set `Self-hosted runners` to `Read and write`
 
 Keep the other settings as default and click on _Create GitHub App_. On the next page you are prompted to generate a private key: do this and your browser will download a `.pem` file. Note also the id of your app as you will need it in a few seconds.  
@@ -90,7 +91,13 @@ Current runner version: '2.311.0'
 2023-11-22 15:48:14Z: Listening for Jobs
 ```
 
+You should also see the runner in the settings of your fork (in Settings > Actions > Runners):
+![Idle runner in repo settings](/docs/img/github-idle-runner.png)  
+You can also see it in the settings of your organization.
+
 ## Test the self-hosted runners
 To test the runner, simply run the `Test self-hosted runners` workflow. This is a simple workflow that connects to Azure and run Azure CLI commands to output the account used and the list of resource groups in the subscription.
 
 > The most important thing on this workflow is the use of the `runs-on: self-hosted` property of the single job. It means that the job has to run on a self-hosted runner, whereas the previous workflow run on runners managed by GitHub (using the `runs-on: ubuntu-latest` property).
+
+Once the workflow manually triggered, you can check that the job is picked up by the self-hosted runner (either from the GitHub Actions UI or from the Container Apps log stream in the portal).
