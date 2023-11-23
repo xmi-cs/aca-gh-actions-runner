@@ -22,3 +22,4 @@ jobs:
       - run: |
           az account show
           az group list --query '[].name' -o tsv
+        name: Execute az cli sample commands
