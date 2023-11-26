@@ -90,6 +90,7 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               value: gitHubOrganization
             }
             {
+              // Remove this once https://github.com/microsoft/azure-container-apps/issues/502 is fixed
               name: 'APPSETTING_WEBSITE_SITE_NAME'
               value: 'az-cli-workaround'
             }
