@@ -90,6 +90,10 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               value: gitHubOrganization
             }
             {
+              name: 'APPSETTING_WEBSITE_SITE_NAME'
+              value: 'az-cli-workaround'
+            }
+            {
               name: 'EPHEMERAL'
               value: '1'
             }
