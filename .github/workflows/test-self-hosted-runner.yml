@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - run: |
-          az login --identity
+          az login --identity -u $MSI_CLIENT_ID
           az account show
           az group list --query '[].name' -o tsv
         name: Execute az cli sample commands

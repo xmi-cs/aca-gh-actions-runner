@@ -94,6 +94,10 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               value: 'az-cli-workaround'
             }
             {
+              name: 'MSI_CLIENT_ID'
+              value: acaMsi.properties.clientId
+            }
+            {
               name: 'EPHEMERAL'
               value: '1'
             }
