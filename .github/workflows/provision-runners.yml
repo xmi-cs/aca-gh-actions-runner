@@ -49,7 +49,7 @@ jobs:
             project=${{ vars.PROJECT }} 
             acrName=${{ vars.ACR_NAME }} 
             acaEnvName=${{ vars.ACA_ENV_NAME }} 
-            imageTag=from-base 
+            imageTag=from-ghcr
             gitHubAccessToken=${{ steps.generate-access-token.outputs.token }} 
             gitHubOrganization=${{ github.repository_owner }} 
           deploymentName: deploy-aca-gh-runners-app
