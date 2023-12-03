@@ -9,7 +9,23 @@ param imageTag string
 param gitHubAccessToken string
 param gitHubOrganization string
 
-module aca '../modules/containerApp.bicep' = {
+param useJobs bool = true
+
+module acj '../modules/containerAppJob.bicep' = if (useJobs) {
+  name: 'deploy-${project}-acj'
+  params: {
+    acaEnvironmentName: acaEnvName
+    acrName: acrName
+    gitHubAccessToken: gitHubAccessToken
+    gitHubOrganization: gitHubOrganization
+    imageTag: imageTag
+    location: location
+    project: project
+    tags: union(resourceGroup().tags, { module: 'containerAppJob.bicep' })
+  }
+}
+
+module aca '../modules/containerApp.bicep' = if (!useJobs) {
   name: 'deploy-${project}-aca'
   params: {
     acaEnvironmentName: acaEnvName
