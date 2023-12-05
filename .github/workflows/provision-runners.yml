@@ -2,6 +2,12 @@ name: Create and register self-hosted runners
 
 on:
   workflow_dispatch:
+    inputs:
+      useJobs:
+        description: Use Container Apps jobs instead of Container Apps
+        type: boolean
+        default: true
+        required: true
 
 permissions:
   id-token: write
@@ -52,4 +58,5 @@ jobs:
             imageTag=from-base
             gitHubAccessToken=${{ steps.generate-access-token.outputs.token }} 
             gitHubOrganization=${{ github.repository_owner }} 
+            useJobs=${{ inputs.useJobs }}
           deploymentName: deploy-aca-gh-runners-app
