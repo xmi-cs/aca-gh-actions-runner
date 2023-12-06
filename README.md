@@ -36,6 +36,7 @@ Lastly, in the settings of your fork, go to _Secrets and variables_, and _Action
 ### Connect GitHub with Azure
 To grant access to your Azure subscription to the GitHub Action runners, you need to create a service principal with the _owner_ role to your subscription (or _contributor_ and _user access administrator_ roles).  
 
+> [!NOTE]
 > This use of privileged role(s) is necessary to create a role assignment in the Bicep code. If you have an Entra P1 or P2 license your can also create a custom role for finer-grained control  
 
 To create your service principal, follow the instructions [here](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux#use-the-azure-login-action-with-openid-connect), until you have added federated credentials and create the following variables:
@@ -44,7 +45,8 @@ To create your service principal, follow the instructions [here](https://learn.m
 - `AZURE_SUBSCRIPTION_ID` with your subscription id
 - `AZURE_LOCATION` with the Azure region you want to create the resources in (not related to the GitHub-Azure connection but better set it while already setting variables)
 
-> Note that no client secret is required thanks to OpenID Connect and federated credentials
+> [!NOTE]
+> No client secret is required thanks to OpenID Connect and federated credentials
 
 Now that everything is set-up, you can start to deploy some resources.
 
@@ -105,9 +107,16 @@ You should also see the runner in the settings of your fork (in Settings > Actio
 You can also see it in the settings of your organization.
 </details>
 
+<details>
+  <summary>Using Container Apps Jobs</summary>
+  Jobs need to be triggered to appear as a runner in GitHub. At first you can check that the Container App Job has been created in the Azure portal, and the _Execution history_ is empty.
+</details>
+
+
 ## Test the self-hosted runners
 To test the runner, simply run the `Test self-hosted runners` workflow. This is a simple workflow that connects to Azure and run Azure CLI commands to output the account used and the list of resource groups in the subscription.
 
-> The most important thing on this workflow is the use of the `runs-on: self-hosted` property of the single job. It means that the job has to run on a self-hosted runner, whereas the previous workflow run on runners managed by GitHub (using the `runs-on: ubuntu-latest` property).
+> [!IMPORTANT]
+> Notice the use of the `runs-on: self-hosted` property of the single job. It means that the job has to run on a self-hosted runner, whereas the previous workflow run on runners managed by GitHub (using the `runs-on: ubuntu-latest` property).
 
 Once the workflow manually triggered, you can check that the job is picked up by the self-hosted runner (either from the GitHub Actions UI or from the Container Apps log stream in the portal).
