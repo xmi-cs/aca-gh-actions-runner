@@ -1,7 +1,8 @@
 # GitHub organization self-hosted runners in Azure Container Apps
 
 This repository is a starter for hosting an organization's GitHub Actions runners in Azure Container Apps.  
-It contains Bicep code to provision the resources, a simple Dockerfile and GitHub Actions workflow to automate everything and test the self-hosted runners.
+It contains Bicep code to provision the resources, a simple Dockerfile and GitHub Actions workflow to automate everything and test the self-hosted runners.  
+It was side-created with a series of blog posts in two parts: the [first one](https://blog.xmi.fr/posts/github-runner-container-app-part1) sets a single runner and the [second one](https://blog.xmi.fr/posts/github-runner-container-app-part2) adds auto-scaling.
 
 ## Getting started
 The best way to use this is to fork this repository, and set-up your fork to connect with GitHub and your Azure subscription.  
@@ -35,6 +36,7 @@ Lastly, in the settings of your fork, go to _Secrets and variables_, and _Action
 ### Connect GitHub with Azure
 To grant access to your Azure subscription to the GitHub Action runners, you need to create a service principal with the _owner_ role to your subscription (or _contributor_ and _user access administrator_ roles).  
 
+> [!TIP]
 > This use of privileged role(s) is necessary to create a role assignment in the Bicep code. If you have an Entra P1 or P2 license your can also create a custom role for finer-grained control  
 
 To create your service principal, follow the instructions [here](https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux#use-the-azure-login-action-with-openid-connect), until you have added federated credentials and create the following variables:
@@ -43,7 +45,8 @@ To create your service principal, follow the instructions [here](https://learn.m
 - `AZURE_SUBSCRIPTION_ID` with your subscription id
 - `AZURE_LOCATION` with the Azure region you want to create the resources in (not related to the GitHub-Azure connection but better set it while already setting variables)
 
-> Note that no client secret is required thanks to OpenID Connect and federated credentials
+> [!NOTE]
+> No client secret is required thanks to OpenID Connect and federated credentials
 
 Now that everything is set-up, you can start to deploy some resources.
 
@@ -61,9 +64,17 @@ Lastly it sets a few deployment outputs as variables so that the next workflow c
 ## Deploy the runners
 Next workflow to run is `Create and register self-hosted runners`. This one generates an access token as the GitHub App, and pass it as an input to a Bicep deployment. This deployment provisions the Container App inside the Container Apps Environment, using the container image built and pushed by the previous workflow.
 
+> [!NOTE]
 > The previous workflow also generates an access token but it's less noticeable, it's a short-lived token for setting the variables
 
-Once the workflow has finished you should see the Container App in your resource group. In the _Revisions_ panel of the Container App, you should see an active revision and in the _Log Stream_ panel, a message indicating the successful connection to GitHub:
+When you launch the workflow, you can choose between deploying a Container App or a Container App Job. The job is used by default as it's a better fit for this scenario.
+
+Once the workflow has finished you should see the Container App Job (or the App) in your resource group. Checking the result depends on type of deployed app.
+
+<details>
+<summary>Using Container Apps</summary>
+In the _Revisions_ panel of the Container App, you should see an active revision and in the _Log Stream_ panel, a message indicating the successful connection to GitHub:
+
 ```
 Runner reusage is disabled
 Obtaining the token of the runner
@@ -94,10 +105,21 @@ Current runner version: '2.311.0'
 You should also see the runner in the settings of your fork (in Settings > Actions > Runners):
 ![Idle runner in repo settings](/docs/img/github-idle-runner.png)  
 You can also see it in the settings of your organization.
+</details>
+
+<details>
+  <summary>Using Container Apps Jobs</summary>
+  Jobs need to be triggered to appear as a runner in GitHub. At first you can check that the Container App Job has been created in the Azure portal, and the <i>Execution history</i> is empty.
+</details>
+
 
 ## Test the self-hosted runners
-To test the runner, simply run the `Test self-hosted runners` workflow. This is a simple workflow that connects to Azure and run Azure CLI commands to output the account used and the list of resource groups in the subscription.
+To test the runner, simply run the `Test self-hosted runners` workflow. This is a simple workflow that connects to Azure and run Azure CLI commands to output the account used and the list of resource groups in the subscription.  
+You can trigger the workflow several times to see how the runner scales in response to queued jobs.
 
-> The most important thing on this workflow is the use of the `runs-on: self-hosted` property of the single job. It means that the job has to run on a self-hosted runner, whereas the previous workflow run on runners managed by GitHub (using the `runs-on: ubuntu-latest` property).
+> [!IMPORTANT]
+> Notice the use of the `runs-on: self-hosted` property of the single job. It means that the job has to run on a self-hosted runner, whereas the previous workflow run on runners managed by GitHub (using the `runs-on: ubuntu-latest` property).
 
-Once the workflow manually triggered, you can check that the job is picked up by the self-hosted runner (either from the GitHub Actions UI or from the Container Apps log stream in the portal).
+Once the workflow manually triggered, you can check that the jobs are picked up by the self-hosted runners from the GitHub Actions UI or from the Azure portal: 
+- For Container Apps, you can use the _Log stream_ panel
+- For Container Apps Jobs, you can use the _Execution history_ panel or drill into the logs
