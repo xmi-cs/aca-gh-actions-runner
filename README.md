@@ -112,7 +112,7 @@ You can also see it in the settings of your organization.
   Jobs need to be triggered to appear as a runner in GitHub. At first you can check that the Container App Job has been created in the Azure portal, and the <i>Execution history</i> is empty.
 </details>
 
-The new runner(s) will be in the `Default` runner group of your GitHub organization. If you have forked this repository to your own organization, it will be a public repository. In order to make the new runner(s) available to public repositories, you need to check the "Allow public repositories" checkbox in the settings of the `Default` runner group.
+The new runner(s) will be in the `Default` runner group of your GitHub organization. If you have forked this repository to your own organization, it will be a public repository. In order to make the new runner(s) available to public repositories, you need to check the "Allow public repositories" checkbox in the settings of the `Default` runner group. You can find this setting under `Your organization` -> Settings -> Actions -> Runner groups -> Default.
 
 ## Test the self-hosted runners
 To test the runner, simply run the `Test self-hosted runners` workflow. This is a simple workflow that connects to Azure and run Azure CLI commands to output the account used and the list of resource groups in the subscription.  
