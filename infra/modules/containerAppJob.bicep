@@ -12,8 +12,10 @@ param containerCpu string = '0.25'
 param containerMemory string = '0.5Gi'
 param imageTag string
 
+param gitHubAppId string
+param gitHubAppInstallationId string
 @secure()
-param gitHubAccessToken string
+param gitHubAppKey string
 param gitHubOrganization string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
@@ -61,8 +63,8 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
       ]
       secrets: [
         {
-          name: 'github-access-token'
-          value: gitHubAccessToken
+          name: 'github-app-key'
+          value: gitHubAppKey
         }
       ]
       replicaTimeout: 1800
@@ -75,13 +77,15 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
               type: 'github-runner'
               auth: [
                 {
-                  triggerParameter: 'personalAccessToken'
-                  secretRef: 'github-access-token'
+                  triggerParameter: 'appKey'
+                  secretRef: 'github-app-key'
                 }
               ]
               metadata: {
                 owner: gitHubOrganization
                 runnerScope: 'org'
+                applicationId: gitHubAppId
+                installationId: gitHubAppInstallationId
               }
             }
           ]
@@ -99,8 +103,12 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
           }
           env: [
             {
-              name: 'ACCESS_TOKEN'
-              secretRef: 'github-access-token'
+              name: 'APP_ID'
+              value: gitHubAppId
+            }
+            {
+              name: 'APP_PRIVATE_KEY'
+              secretRef: 'github-app-key'
             }
             {
               name: 'RUNNER_SCOPE'

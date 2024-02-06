@@ -7,6 +7,10 @@ param imageTag string
 
 @secure()
 param gitHubAccessToken string
+param gitHubAppId string
+param gitHubAppInstallationId string
+@secure()
+param gitHubAppKey string
 param gitHubOrganization string
 
 param useJobs bool = true
@@ -16,7 +20,9 @@ module acj '../modules/containerAppJob.bicep' = if (useJobs) {
   params: {
     acaEnvironmentName: acaEnvName
     acrName: acrName
-    gitHubAccessToken: gitHubAccessToken
+    gitHubAppId: gitHubAppId
+    gitHubAppInstallationId: gitHubAppInstallationId
+    gitHubAppKey: gitHubAppKey
     gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location
