@@ -84,8 +84,8 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
               metadata: {
                 owner: gitHubOrganization
                 runnerScope: 'org'
-                applicationId: gitHubAppId
-                installationId: gitHubAppInstallationId
+                applicationID: gitHubAppId
+                installationID: gitHubAppInstallationId
               }
             }
           ]
