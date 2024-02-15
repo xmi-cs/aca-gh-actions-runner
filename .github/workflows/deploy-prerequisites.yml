@@ -4,10 +4,20 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
-  contents: read
   actions: write
-    
+  checks: write
+  contents: write
+  deployments: write
+  id-token: write
+  issues: write
+  discussions: write
+  packages: write
+  pages: write
+  pull-requests: write
+  repository-projects: write
+  security-events: write
+  statuses: write    
+
 jobs:
   deploy-prerequisites:
     runs-on: ubuntu-latest
