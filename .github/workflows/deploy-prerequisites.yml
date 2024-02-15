@@ -41,6 +41,7 @@ jobs:
   
       - name: Update GitHub variables
         run: |
+          gh variable list
           gh variable set PROJECT --body ${{ steps.bicep-deploy.outputs.project }}
           gh variable set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
           gh variable set ACR_NAME --body ${{ steps.bicep-deploy.outputs.acrName }}
