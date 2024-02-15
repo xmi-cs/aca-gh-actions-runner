@@ -37,13 +37,6 @@ jobs:
           parameters: >
             location=${{ vars.AZURE_LOCATION }}
           deploymentName: deploy-aca-gh-runners-dev-prerequisites
-
-      - name: Generate access token
-        id: generate-access-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
   
       - name: Update GitHub variables
         run: |
@@ -52,7 +45,7 @@ jobs:
           gh variable set ACR_NAME --body ${{ steps.bicep-deploy.outputs.acrName }}
           gh variable set ACA_ENV_NAME --body ${{ steps.bicep-deploy.outputs.acaEnvName }}
         env:
-          GITHUB_TOKEN: ${{ steps.generate-access-token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
           az acr build -r ${{ steps.bicep-deploy.outputs.acrName }} -g ${{ steps.bicep-deploy.outputs.rgName }} -f src/Dockerfile.from-base -t runners/github/linux:from-base src
