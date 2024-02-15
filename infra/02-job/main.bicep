@@ -5,20 +5,24 @@ param acrName string
 param acaEnvName string
 param imageTag string
 
+param gitHubAppId string
+param gitHubAppInstallationId string
 @secure()
-param gitHubAccessToken string
+param gitHubAppKey string
 param gitHubOrganization string
 
-module aca '../modules/containerApp.bicep' = {
-  name: 'deploy-${project}-aca'
+module acj '../modules/containerAppJob.bicep' = {
+  name: 'deploy-${project}-acj'
   params: {
     acaEnvironmentName: acaEnvName
     acrName: acrName
-    gitHubAccessToken: gitHubAccessToken
+    gitHubAppId: gitHubAppId
+    gitHubAppInstallationId: gitHubAppInstallationId
+    gitHubAppKey: gitHubAppKey
     gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location
     project: project
-    tags: union(resourceGroup().tags, { module: 'containerApp.bicep' })
+    tags: union(resourceGroup().tags, { module: 'containerAppJob.bicep' })
   }
 }
