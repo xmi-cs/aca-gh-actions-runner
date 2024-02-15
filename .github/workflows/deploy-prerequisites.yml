@@ -18,10 +18,10 @@ jobs:
       ARM_USE_OIDC: true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v1.6.1
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
@@ -29,7 +29,7 @@ jobs:
 
       - name: Bicep deploy
         id: bicep-deploy
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           scope: subscription
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
