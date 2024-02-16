@@ -3,20 +3,7 @@ name: Deploy prerequisites
 on:
   workflow_dispatch:
 
-permissions:
-  actions: write
-  checks: write
-  contents: write
-  deployments: write
-  id-token: write
-  issues: write
-  discussions: write
-  packages: write
-  pages: write
-  pull-requests: write
-  repository-projects: write
-  security-events: write
-  statuses: write    
+permissions: write-all
 
 jobs:
   deploy-prerequisites:
@@ -58,7 +45,6 @@ jobs:
           gh variable set ACA_ENV_NAME --body ${{ steps.bicep-deploy.outputs.acaEnvName }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
           az acr build -r ${{ steps.bicep-deploy.outputs.acrName }} -g ${{ steps.bicep-deploy.outputs.rgName }} -f src/Dockerfile.from-base -t runners/github/linux:from-base src
