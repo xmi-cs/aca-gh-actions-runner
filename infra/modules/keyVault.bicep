@@ -11,11 +11,12 @@ resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
   location: location
   tags: tags
   properties: {
+    enableRbacAuthorization: true
     sku: {
       family: 'A'
       name: 'standard'
     }
-    tenantId: subscription().tenantId
+    tenantId: subscription().tenantId    
   }
 }
 
