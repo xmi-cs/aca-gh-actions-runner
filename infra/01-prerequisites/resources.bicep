@@ -48,14 +48,12 @@ module keyVault '../modules/keyVault.bicep' = {
   }
 }
 
-module keyVaultGitHubAppKey '../modules/keyVaultKey.bicep' = {
+module keyVaultGitHubAppKey '../modules/keyVaultSecret.bicep' = {
   name: 'deploy-${project}-kv-github-app-key'
   params: {
-    keyName: 'key-github-app'
-    keyValue: gitHubAppKey
-    location: location
-    project: project
-    tags: union(tags, {module: 'keyVaultKey.bicep'})
+    secretName: 'key-github-app'
+    secretValue: gitHubAppKey
+    tags: union(tags, {module: 'keyVaultSecret.bicep'})
     vaultName: keyVault.outputs.name
   }
 }
