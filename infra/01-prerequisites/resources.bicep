@@ -60,3 +60,4 @@ module keyVaultGitHubAppKey '../modules/keyVaultSecret.bicep' = {
 
 output acrName string = acr.outputs.acrName
 output acaEnvName string = acaEnv.outputs.acaEnvName
+output gitHubAppKeySecretUri string = keyVaultGitHubAppKey.outputs.uri

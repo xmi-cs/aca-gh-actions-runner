@@ -18,3 +18,5 @@ resource kvSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' = {
     value: secretValue
   }
 }
+
+output uri string = kvSecret.properties.secretUri
