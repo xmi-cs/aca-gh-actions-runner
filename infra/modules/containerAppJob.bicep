@@ -25,7 +25,7 @@ resource acaEnv 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
   name: acaEnvironmentName
 }
 
-var kvName = replace(substring(gitHubAppKeySecretUri, indexOf(gitHubAppKeySecretUri, '.')), 'https://', '')
+var kvName = replace(substring(gitHubAppKeySecretUri, 0, indexOf(gitHubAppKeySecretUri, '.')), 'https://', '')
 resource kv 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   name: kvName
 }
