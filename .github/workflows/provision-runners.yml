@@ -59,7 +59,7 @@ jobs:
             imageTag=from-base
             gitHubAppId=${{ vars.GH_APP_ID }}
             gitHubAppInstallationId=${{ vars.GH_APP_INSTALLATION_ID }}
-            gitHubAppKey="${{ secrets.GH_APP_PRIVATE_KEY }}"
+            gitHubAppKeySecretUri=${{ vars.GH_APP_PRIVATE_KEY_SECRET_URI }}
             gitHubOrganization=${{ github.repository_owner }} 
           deploymentName: deploy-aca-gh-runners-app
 

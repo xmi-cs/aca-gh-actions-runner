@@ -7,8 +7,7 @@ param imageTag string
 
 param gitHubAppId string
 param gitHubAppInstallationId string
-@secure()
-param gitHubAppKey string
+param gitHubAppKeySecretUri string
 param gitHubOrganization string
 
 module acj '../modules/containerAppJob.bicep' = {
@@ -18,7 +17,7 @@ module acj '../modules/containerAppJob.bicep' = {
     acrName: acrName
     gitHubAppId: gitHubAppId
     gitHubAppInstallationId: gitHubAppInstallationId
-    gitHubAppKey: gitHubAppKey
+    gitHubAppKeySecretUri: gitHubAppKeySecretUri
     gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location

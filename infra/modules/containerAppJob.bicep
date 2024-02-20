@@ -14,8 +14,7 @@ param imageTag string
 
 param gitHubAppId string
 param gitHubAppInstallationId string
-@secure()
-param gitHubAppKey string
+param gitHubAppKeySecretUri string
 param gitHubOrganization string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
@@ -24,6 +23,11 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
 
 resource acaEnv 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
   name: acaEnvironmentName
+}
+
+var kvName = replace(substring(gitHubAppKeySecretUri, indexOf(gitHubAppKeySecretUri, '.')), 'https://', '')
+resource kv 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  name: kvName
 }
 
 resource acaMsi 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
@@ -38,6 +42,17 @@ resource acaAcrPull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   properties: {
     principalId: acaMsi.properties.principalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', acrPullId)
+    principalType: 'ServicePrincipal'
+  }
+}
+
+var secretUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
+resource kvSecretUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  scope: kv
+  name: guid(acaMsi.id, kv.id, secretUserRoleId)
+  properties: {
+    principalId: acaMsi.properties.principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', secretUserRoleId)
     principalType: 'ServicePrincipal'
   }
 }
@@ -64,7 +79,8 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
       secrets: [
         {
           name: 'github-app-key'
-          value: gitHubAppKey
+          keyVaultUrl: gitHubAppKeySecretUri
+          identity: acaMsi.id
         }
       ]
       replicaTimeout: 1800
