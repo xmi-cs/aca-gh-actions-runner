@@ -48,8 +48,8 @@ resource acaAcrPull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 
 var secretUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
 resource kvSecretUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  scope: kv
   name: guid(acaMsi.id, kv.id, secretUserRoleId)
+  scope: kv
   properties: {
     principalId: acaMsi.properties.principalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', secretUserRoleId)
@@ -159,5 +159,6 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
 
   dependsOn: [
     acaAcrPull
+    kvSecretUser
   ]
 }
