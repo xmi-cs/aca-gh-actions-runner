@@ -31,7 +31,10 @@ Keep the other settings as default and click on _Create GitHub App_. On the next
 
 Then you need to _install_ your GitHub App to grant the permissions defined above in your organization. You can choose to give it the access to all your repos or just some of them. At least include your fork otherwise it won't work.
 
-Lastly, in the settings of your fork, go to _Secrets and variables_, and _Actions_. Create a secret named `GH_APP_PRIVATE_KEY` with your GitHub App private key (the content of the `.pem` file) and a variable named `GH_APP_ID` with the GitHub App id as the value.
+Lastly, in the settings of your fork, go to _Secrets and variables_, and _Actions_. Create a secret named `GH_APP_PRIVATE_KEY` with your GitHub App private key (the content of the `.pem` file) and two variables named `GH_APP_ID` and `GH_APP_INSTALLATION_ID` with the GitHub App id and installation id as values
+
+> [!TIP]
+> You can find the installation id from the settings of your organization or repo, in _Third-party Access_, and _GitHub Apps_. Click on _Configure_ next to your app and you'll find the installation id in the URL.
 
 ### Connect GitHub with Azure
 To grant access to your Azure subscription to the GitHub Action runners, you need to create a service principal with the _owner_ role to your subscription (or _contributor_ and _user access administrator_ roles).  
@@ -56,6 +59,7 @@ The first workflow to run is `Deploy prerequisites` from the Actions tab in your
 - A Container Apps environment
 - A Container registry
 - A Log Analytics workspace
+- A Key Vault containing the GitHub App private key
 
 It will also build a container image from the Dockerfile [here](/src/Dockerfile.from-base) which is based on the work from this great [repo](https://github.com/myoung34/docker-github-actions-runner) and push it to your registry with the tag `runners/github/linux:from-base`.  
 
