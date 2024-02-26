@@ -10,10 +10,23 @@ param gitHubAppInstallationId string
 param gitHubAppKeySecretUri string
 param gitHubOrganization string
 
+var kvName = replace(substring(gitHubAppKeySecretUri, 0, indexOf(gitHubAppKeySecretUri, '.')), 'https://', '')
+module msi '../modules/containerAppIdentity.bicep' = {
+  name: '${deployment().name}-msi'
+  params: {
+    acrName: acrName
+    kvName: kvName
+    location: location
+    project: project
+  }
+}
+
 module aca '../modules/containerApp.bicep' = {
-  name: 'deploy-${project}-aca'
+  name: '${deployment().name}-aca'
   params: {
     acaEnvironmentName: acaEnvName
+    acaMsiId: msi.outputs.resourceId
+    acaMsiClientId: msi.outputs.clientId
     acrName: acrName
     gitHubAppId: gitHubAppId
     gitHubAppInstallationId: gitHubAppInstallationId

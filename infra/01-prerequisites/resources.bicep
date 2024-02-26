@@ -10,7 +10,7 @@ param gitHubAppKey string
 var uniqueSuffix = uniqueString(subscription().id, location, project)
 
 module acr '../modules/containerRegistry.bicep' = {
-  name: 'deploy-${project}-acr'
+  name: '${deployment().name}-acr'
   params: {
     location: location
     project: project
@@ -20,7 +20,7 @@ module acr '../modules/containerRegistry.bicep' = {
 }
 
 module law '../modules/logAnalytics.bicep' = {
-  name: 'deploy-${project}-law'
+  name: '${deployment().name}-law'
   params: {
     location: location
     project: project
@@ -29,7 +29,7 @@ module law '../modules/logAnalytics.bicep' = {
 }
 
 module acaEnv '../modules/containerAppEnvironment.bicep' = {
-  name: 'deploy-${project}-aca-env'
+  name: '${deployment().name}-aca-env'
   params: {
     location: location
     project: project
@@ -39,7 +39,7 @@ module acaEnv '../modules/containerAppEnvironment.bicep' = {
 }
 
 module keyVault '../modules/keyVault.bicep' = {
-  name: 'deploy-${project}-kv'
+  name: '${deployment().name}-kv'
   params: {
     location: location
     project: project
@@ -49,7 +49,7 @@ module keyVault '../modules/keyVault.bicep' = {
 }
 
 module keyVaultGitHubAppKey '../modules/keyVaultSecret.bicep' = {
-  name: 'deploy-${project}-kv-github-app-key'
+  name: '${deployment().name}-kv-github-app-key'
   params: {
     secretName: 'key-github-app'
     secretValue: gitHubAppKey
