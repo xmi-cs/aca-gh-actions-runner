@@ -12,8 +12,9 @@ param containerCpu string = '0.25'
 param containerMemory string = '0.5Gi'
 param imageTag string
 
-@secure()
-param gitHubAccessToken string
+param gitHubAppId string
+param gitHubAppInstallationId string
+param gitHubAppKeySecretUri string
 param gitHubOrganization string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
@@ -40,6 +41,22 @@ resource acaAcrPull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
+var kvName = replace(substring(gitHubAppKeySecretUri, 0, indexOf(gitHubAppKeySecretUri, '.')), 'https://', '')
+resource kv 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  name: kvName
+}
+
+var secretUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
+resource kvSecretUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(acaMsi.id, kv.id, secretUserRoleId)
+  scope: kv
+  properties: {
+    principalId: acaMsi.properties.principalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', secretUserRoleId)
+    principalType: 'ServicePrincipal'
+  }
+}
+
 resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
   name: 'ca-${project}'
   location: location
@@ -62,8 +79,9 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
       ]
       secrets: [
         {
-          name: 'github-access-token'
-          value: gitHubAccessToken
+          name: 'github-app-key'
+          keyVaultUrl: gitHubAppKeySecretUri
+          identity: acaMsi.id
         }
       ]
     }
@@ -78,8 +96,12 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
           }
           env: [
             {
-              name: 'ACCESS_TOKEN'
-              secretRef: 'github-access-token'
+              name: 'APP_ID'
+              value: gitHubAppId
+            }
+            {
+              name: 'APP_PRIVATE_KEY'
+              secretRef: 'github-app-key'
             }
             {
               name: 'RUNNER_SCOPE'
@@ -119,13 +141,15 @@ resource acaApp 'Microsoft.App/containerApps@2023-05-01' = {
               type: 'github-runner'
               auth: [
                 {
-                  triggerParameter: 'personalAccessToken'
-                  secretRef: 'github-access-token'
+                  triggerParameter: 'appKey'
+                  secretRef: 'github-app-key'
                 }
               ]
               metadata: {
                 owner: gitHubOrganization
                 runnerScope: 'org'
+                applicationID: gitHubAppId
+                installationID: gitHubAppInstallationId
               }
             }
           }

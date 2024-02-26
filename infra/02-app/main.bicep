@@ -5,8 +5,9 @@ param acrName string
 param acaEnvName string
 param imageTag string
 
-@secure()
-param gitHubAccessToken string
+param gitHubAppId string
+param gitHubAppInstallationId string
+param gitHubAppKeySecretUri string
 param gitHubOrganization string
 
 module aca '../modules/containerApp.bicep' = {
@@ -14,7 +15,9 @@ module aca '../modules/containerApp.bicep' = {
   params: {
     acaEnvironmentName: acaEnvName
     acrName: acrName
-    gitHubAccessToken: gitHubAccessToken
+    gitHubAppId: gitHubAppId
+    gitHubAppInstallationId: gitHubAppInstallationId
+    gitHubAppKeySecretUri: gitHubAppKeySecretUri
     gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location

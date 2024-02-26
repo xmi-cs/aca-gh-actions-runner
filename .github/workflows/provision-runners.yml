@@ -29,15 +29,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Generate access token
-        id: generate-access-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ vars.GH_APP_ID }}
-          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          skip-token-revoke: true
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -61,7 +52,7 @@ jobs:
             gitHubAppInstallationId=${{ vars.GH_APP_INSTALLATION_ID }}
             gitHubAppKeySecretUri=${{ vars.GH_APP_PRIVATE_KEY_SECRET_URI }}
             gitHubOrganization=${{ github.repository_owner }} 
-          deploymentName: deploy-aca-gh-runners-app
+          deploymentName: deploy-aca-gh-runners-job
 
       - name: Deploy Container App
         uses: azure/arm-deploy@v1
@@ -75,6 +66,8 @@ jobs:
             acrName=${{ vars.ACR_NAME }} 
             acaEnvName=${{ vars.ACA_ENV_NAME }} 
             imageTag=from-base
-            gitHubAccessToken=${{ steps.generate-access-token.outputs.token }}
+            gitHubAppId=${{ vars.GH_APP_ID }}
+            gitHubAppInstallationId=${{ vars.GH_APP_INSTALLATION_ID }}
+            gitHubAppKeySecretUri=${{ vars.GH_APP_PRIVATE_KEY_SECRET_URI }}
             gitHubOrganization=${{ github.repository_owner }} 
           deploymentName: deploy-aca-gh-runners-app
