@@ -6,8 +6,7 @@ param tags {
 
 param acrName string
 param acaEnvironmentName string
-param acaMsiId string
-param acaMsiClientId string
+param acaMsiName string
 @allowed([ '0.25', '0.5', '0.75', '1.0', '1.25', '1.5', '1.75', '2.0' ])
 param containerCpu string = '0.25'
 @allowed([ '0.5Gi', '1.0Gi', '1.5Gi', '2.0Gi', '2.5Gi', '3.0Gi', '3.5Gi', '4.0Gi' ])
@@ -27,6 +26,10 @@ resource acaEnv 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
   name: acaEnvironmentName
 }
 
+resource acaMsi 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
+  name: acaMsiName
+}
+
 resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
   name: 'caj-${project}'
   location: location
@@ -34,7 +37,7 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${acaMsiId}': {}
+      '${acaMsi.id}': {}
     }
   }
   properties: {
@@ -43,14 +46,14 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
       registries: [
         {
           server: acr.properties.loginServer
-          identity: acaMsiId
+          identity: acaMsi.id
         }
       ]
       secrets: [
         {
           name: 'github-app-key'
           keyVaultUrl: gitHubAppKeySecretUri
-          identity: acaMsiId
+          identity: acaMsi.id
         }
       ]
       replicaTimeout: 1800
@@ -111,7 +114,7 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
             }
             {
               name: 'MSI_CLIENT_ID'
-              value: acaMsiClientId
+              value: acaMsi.properties.clientId
             }
             {
               name: 'EPHEMERAL'

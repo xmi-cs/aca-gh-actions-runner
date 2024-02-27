@@ -58,6 +58,17 @@ module keyVaultGitHubAppKey '../modules/keyVaultSecret.bicep' = {
   }
 }
 
+module msi '../modules/containerAppIdentity.bicep' = {
+  name: '${deployment().name}-msi'
+  params: {
+    acrName: acr.outputs.acrName
+    kvName: keyVault.outputs.name
+    location: location
+    project: project
+  }
+}
+
 output acrName string = acr.outputs.acrName
 output acaEnvName string = acaEnv.outputs.acaEnvName
+output acaMsiName string = msi.outputs.msiName
 output gitHubAppKeySecretUri string = keyVaultGitHubAppKey.outputs.uri

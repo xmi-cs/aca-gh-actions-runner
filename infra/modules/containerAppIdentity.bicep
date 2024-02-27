@@ -39,5 +39,4 @@ resource kvSecretUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
-output resourceId string = acaMsi.id
-output clientId string = acaMsi.properties.clientId
+output msiName string = acaMsi.name

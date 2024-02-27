@@ -47,6 +47,7 @@ jobs:
             project=${{ vars.PROJECT }} 
             acrName=${{ vars.ACR_NAME }} 
             acaEnvName=${{ vars.ACA_ENV_NAME }} 
+            acaMsiName=${{ vars.ACA_MSI_NAME }}
             imageTag=from-base
             gitHubAppId=${{ vars.GH_APP_ID }}
             gitHubAppInstallationId=${{ vars.GH_APP_INSTALLATION_ID }}

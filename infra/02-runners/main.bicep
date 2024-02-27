@@ -5,6 +5,7 @@ param useJobs bool = true
 
 param acrName string
 param acaEnvName string
+param acaMsiName string
 param imageTag string
 
 param gitHubAppId string
@@ -12,23 +13,11 @@ param gitHubAppInstallationId string
 param gitHubAppKeySecretUri string
 param gitHubOrganization string
 
-var kvName = replace(substring(gitHubAppKeySecretUri, 0, indexOf(gitHubAppKeySecretUri, '.')), 'https://', '')
-module msi '../modules/containerAppIdentity.bicep' = {
-  name: '${deployment().name}-msi'
-  params: {
-    acrName: acrName
-    kvName: kvName
-    location: location
-    project: project
-  }
-}
-
 module acj '../modules/containerAppJob.bicep' = if (useJobs) {
   name: '${deployment().name}-job'
   params: {
     acaEnvironmentName: acaEnvName
-    acaMsiId: msi.outputs.resourceId
-    acaMsiClientId: msi.outputs.clientId
+    acaMsiName: acaMsiName
     acrName: acrName
     gitHubAppId: gitHubAppId
     gitHubAppInstallationId: gitHubAppInstallationId
@@ -45,8 +34,7 @@ module aca '../modules/containerApp.bicep' = if (!useJobs) {
   name: '${deployment().name}-aca'
   params: {
     acaEnvironmentName: acaEnvName
-    acaMsiId: msi.outputs.resourceId
-    acaMsiClientId: msi.outputs.clientId
+    acaMsiName: acaMsiName
     acrName: acrName
     gitHubAppId: gitHubAppId
     gitHubAppInstallationId: gitHubAppInstallationId

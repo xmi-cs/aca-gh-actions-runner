@@ -52,7 +52,8 @@ jobs:
           gh variable set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
           gh variable set ACR_NAME --body ${{ steps.bicep-deploy.outputs.acrName }}
           gh variable set ACA_ENV_NAME --body ${{ steps.bicep-deploy.outputs.acaEnvName }}
-          gh variable set GH_APP_PRIVATE_KEY_SECRET_URI --body ${{ steps.bicep-deploy.outputs.gitHubAppKeySecretUri }}
+          gh variable set ACA_MSI_NAME --body ${{ steps.bicep-deploy.outputs.acaMsiName }}
+          gh variable set GH_APP_PRIVATE_KEY_SECRET_URI --body ${{ steps.bicep-deploy.outputs.gitHubAppKeySecretUri }}          
         env:
           GITHUB_TOKEN: ${{ steps.generate-access-token.outputs.token }}
 
