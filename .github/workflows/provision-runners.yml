@@ -41,7 +41,7 @@ jobs:
         with:
           scope: resourcegroup
           resourceGroupName: ${{ vars.RG_NAME }}
-          template: ./infra/02-job/main.bicep
+          template: ./infra/02-runners/main.bicep
           parameters: >
             useJobs=${{ inputs.useJobs }}
             project=${{ vars.PROJECT }} 
