@@ -1,6 +1,8 @@
 param location string = resourceGroup().location
 param project string
 
+param useJobs bool = true
+
 param acrName string
 param acaEnvName string
 param imageTag string
@@ -21,7 +23,25 @@ module msi '../modules/containerAppIdentity.bicep' = {
   }
 }
 
-module aca '../modules/containerApp.bicep' = {
+module acj '../modules/containerAppJob.bicep' = if (useJobs) {
+  name: '${deployment().name}-job'
+  params: {
+    acaEnvironmentName: acaEnvName
+    acaMsiId: msi.outputs.resourceId
+    acaMsiClientId: msi.outputs.clientId
+    acrName: acrName
+    gitHubAppId: gitHubAppId
+    gitHubAppInstallationId: gitHubAppInstallationId
+    gitHubAppKeySecretUri: gitHubAppKeySecretUri
+    gitHubOrganization: gitHubOrganization
+    imageTag: imageTag
+    location: location
+    project: project
+    tags: union(resourceGroup().tags, { module: 'containerAppJob.bicep' })
+  }
+}
+
+module aca '../modules/containerApp.bicep' = if (!useJobs) {
   name: '${deployment().name}-aca'
   params: {
     acaEnvironmentName: acaEnvName

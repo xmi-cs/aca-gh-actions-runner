@@ -36,14 +36,14 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy Container App Job
+      - name: Deploy self-hosted runners
         uses: azure/arm-deploy@v1
-        if: inputs.useJobs
         with:
           scope: resourcegroup
           resourceGroupName: ${{ vars.RG_NAME }}
           template: ./infra/02-job/main.bicep
           parameters: >
+            useJobs=${{ inputs.useJobs }}
             project=${{ vars.PROJECT }} 
             acrName=${{ vars.ACR_NAME }} 
             acaEnvName=${{ vars.ACA_ENV_NAME }} 
@@ -52,22 +52,4 @@ jobs:
             gitHubAppInstallationId=${{ vars.GH_APP_INSTALLATION_ID }}
             gitHubAppKeySecretUri=${{ vars.GH_APP_PRIVATE_KEY_SECRET_URI }}
             gitHubOrganization=${{ github.repository_owner }} 
-          deploymentName: deploy-aca-gh-runners-job
-
-      - name: Deploy Container App
-        uses: azure/arm-deploy@v1
-        if: ${{ ! inputs.useJobs }}
-        with:
-          scope: resourcegroup
-          resourceGroupName: ${{ vars.RG_NAME }}
-          template: ./infra/02-app/main.bicep
-          parameters: >
-            project=${{ vars.PROJECT }} 
-            acrName=${{ vars.ACR_NAME }} 
-            acaEnvName=${{ vars.ACA_ENV_NAME }} 
-            imageTag=from-base
-            gitHubAppId=${{ vars.GH_APP_ID }}
-            gitHubAppInstallationId=${{ vars.GH_APP_INSTALLATION_ID }}
-            gitHubAppKeySecretUri=${{ vars.GH_APP_PRIVATE_KEY_SECRET_URI }}
-            gitHubOrganization=${{ github.repository_owner }} 
-          deploymentName: deploy-aca-gh-runners-app
+          deploymentName: deploy-aca-gh-runners
