@@ -1,7 +1,7 @@
 # GitHub organization self-hosted runners in Azure Container Apps
 
 This repository is a starter for hosting an organization's GitHub Actions runners in Azure Container Apps.  
-It contains Bicep code to provision the resources, a simple Dockerfile and GitHub Actions workflow to automate everything and test the self-hosted runners.  
+It contains Bicep code to provision the resources, a simple Dockerfile and GitHub Actions workflows to automate everything and test the self-hosted runners.  
 It was side-created with a series of blog posts in two parts: the [first one](https://blog.xmi.fr/posts/github-runner-container-app-part1) sets a single runner and the [second one](https://blog.xmi.fr/posts/github-runner-container-app-part2) adds auto-scaling.
 
 ## Getting started
@@ -60,16 +60,20 @@ The first workflow to run is `Deploy prerequisites` from the Actions tab in your
 - A Container registry
 - A Log Analytics workspace
 - A Key Vault containing the GitHub App private key
+- A user-assigned Managed Identity with pull access to the registry and secret user access on the Key Vault
 
 It will also build a container image from the Dockerfile [here](/src/Dockerfile.from-base) which is based on the work from this great [repo](https://github.com/myoung34/docker-github-actions-runner) and push it to your registry with the tag `runners/github/linux:from-base`.  
 
 Lastly it sets a few deployment outputs as variables so that the next workflow can re-use them.
 
+> [!NOTE]
+> The workflow generates an access token using the GitHub App to create variables to store values for the next workflow.
+
 ## Deploy the runners
-Next workflow to run is `Create and register self-hosted runners`. This one generates an access token as the GitHub App, and pass it as an input to a Bicep deployment. This deployment provisions the Container App inside the Container Apps Environment, using the container image built and pushed by the previous workflow.
+Next workflow to run is `Create and register self-hosted runners`. This one uses Bicep to deploy a Container App (Job) in the Container App Environment, using the container image built and pushed by the previous workflow.
 
 > [!NOTE]
-> The previous workflow also generates an access token but it's less noticeable, it's a short-lived token for setting the variables
+> The deployment is split in two parts as the Container App (Job) needs a container image already pushed to a Container Registry. A single workflow could have been used but would take too long to execute. 
 
 When you launch the workflow, you can choose between deploying a Container App or a Container App Job. The job is used by default as it's a better fit for this scenario.
 
