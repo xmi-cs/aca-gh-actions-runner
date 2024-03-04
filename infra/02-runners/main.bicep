@@ -1,22 +1,27 @@
 param location string = resourceGroup().location
 param project string
 
-param acrName string
-param acaEnvName string
-param imageTag string
-
-@secure()
-param gitHubAccessToken string
-param gitHubOrganization string
-
 param useJobs bool = true
 
+param acrName string
+param acaEnvName string
+param acaMsiName string
+param imageTag string
+
+param gitHubAppId string
+param gitHubAppInstallationId string
+param gitHubAppKeySecretUri string
+param gitHubOrganization string
+
 module acj '../modules/containerAppJob.bicep' = if (useJobs) {
-  name: 'deploy-${project}-acj'
+  name: '${deployment().name}-job'
   params: {
     acaEnvironmentName: acaEnvName
+    acaMsiName: acaMsiName
     acrName: acrName
-    gitHubAccessToken: gitHubAccessToken
+    gitHubAppId: gitHubAppId
+    gitHubAppInstallationId: gitHubAppInstallationId
+    gitHubAppKeySecretUri: gitHubAppKeySecretUri
     gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location
@@ -26,11 +31,14 @@ module acj '../modules/containerAppJob.bicep' = if (useJobs) {
 }
 
 module aca '../modules/containerApp.bicep' = if (!useJobs) {
-  name: 'deploy-${project}-aca'
+  name: '${deployment().name}-aca'
   params: {
     acaEnvironmentName: acaEnvName
+    acaMsiName: acaMsiName
     acrName: acrName
-    gitHubAccessToken: gitHubAccessToken
+    gitHubAppId: gitHubAppId
+    gitHubAppInstallationId: gitHubAppInstallationId
+    gitHubAppKeySecretUri: gitHubAppKeySecretUri
     gitHubOrganization: gitHubOrganization
     imageTag: imageTag
     location: location

@@ -6,14 +6,16 @@ param tags {
 
 param acrName string
 param acaEnvironmentName string
+param acaMsiName string
 @allowed([ '0.25', '0.5', '0.75', '1.0', '1.25', '1.5', '1.75', '2.0' ])
 param containerCpu string = '0.25'
 @allowed([ '0.5Gi', '1.0Gi', '1.5Gi', '2.0Gi', '2.5Gi', '3.0Gi', '3.5Gi', '4.0Gi' ])
 param containerMemory string = '0.5Gi'
 param imageTag string
 
-@secure()
-param gitHubAccessToken string
+param gitHubAppId string
+param gitHubAppInstallationId string
+param gitHubAppKeySecretUri string
 param gitHubOrganization string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
@@ -24,20 +26,8 @@ resource acaEnv 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
   name: acaEnvironmentName
 }
 
-resource acaMsi 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: 'id-${project}'
-  location: location
-}
-
-var acrPullId = '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-resource acaAcrPull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(acaMsi.id, acr.id, acrPullId)
-  scope: acr
-  properties: {
-    principalId: acaMsi.properties.principalId
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', acrPullId)
-    principalType: 'ServicePrincipal'
-  }
+resource acaMsi 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
+  name: acaMsiName
 }
 
 resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
@@ -61,8 +51,9 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
       ]
       secrets: [
         {
-          name: 'github-access-token'
-          value: gitHubAccessToken
+          name: 'github-app-key'
+          keyVaultUrl: gitHubAppKeySecretUri
+          identity: acaMsi.id
         }
       ]
       replicaTimeout: 1800
@@ -75,13 +66,15 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
               type: 'github-runner'
               auth: [
                 {
-                  triggerParameter: 'personalAccessToken'
-                  secretRef: 'github-access-token'
+                  triggerParameter: 'appKey'
+                  secretRef: 'github-app-key'
                 }
               ]
               metadata: {
                 owner: gitHubOrganization
                 runnerScope: 'org'
+                applicationID: gitHubAppId
+                installationID: gitHubAppInstallationId
               }
             }
           ]
@@ -99,8 +92,12 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
           }
           env: [
             {
-              name: 'ACCESS_TOKEN'
-              secretRef: 'github-access-token'
+              name: 'APP_ID'
+              value: gitHubAppId
+            }
+            {
+              name: 'APP_PRIVATE_KEY'
+              secretRef: 'github-app-key'
             }
             {
               name: 'RUNNER_SCOPE'
@@ -132,8 +129,4 @@ resource acaJob 'Microsoft.App/jobs@2023-05-01' = {
       ]
     }
   }
-
-  dependsOn: [
-    acaAcrPull
-  ]
 }

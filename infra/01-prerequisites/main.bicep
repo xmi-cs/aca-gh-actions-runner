@@ -3,6 +3,8 @@ targetScope = 'subscription'
 @minLength(1)
 @description('Primary location for all resources')
 param location string
+@secure()
+param gitHubAppKey string
 
 var project = 'aca-gh-runners'
 
@@ -19,16 +21,19 @@ resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 
 module resources 'resources.bicep' = {
   scope: rg
-  name: 'deploy-${project}-prerequisites-resources'
+  name: 'deploy-resources'
 
   params: {
     location: location
     tags: union(tags, { module: '01-prerequisites/resources.bicep' })
     project: project
+    gitHubAppKey: gitHubAppKey
   }
 }
 
 output project string = project
 output acrName string = resources.outputs.acrName
 output acaEnvName string = resources.outputs.acaEnvName
+output acaMsiName string = resources.outputs.acaMsiName
 output rgName string = rg.name
+output gitHubAppKeySecretUri string = resources.outputs.gitHubAppKeySecretUri

@@ -1,7 +1,7 @@
 # GitHub organization self-hosted runners in Azure Container Apps
 
 This repository is a starter for hosting an organization's GitHub Actions runners in Azure Container Apps.  
-It contains Bicep code to provision the resources, a simple Dockerfile and GitHub Actions workflow to automate everything and test the self-hosted runners.  
+It contains Bicep code to provision the resources, a simple Dockerfile and GitHub Actions workflows to automate everything and test the self-hosted runners.  
 It was side-created with a series of blog posts in two parts: the [first one](https://blog.xmi.fr/posts/github-runner-container-app-part1) sets a single runner and the [second one](https://blog.xmi.fr/posts/github-runner-container-app-part2) adds auto-scaling.
 
 ## Getting started
@@ -31,7 +31,10 @@ Keep the other settings as default and click on _Create GitHub App_. On the next
 
 Then you need to _install_ your GitHub App to grant the permissions defined above in your organization. You can choose to give it the access to all your repos or just some of them. At least include your fork otherwise it won't work.
 
-Lastly, in the settings of your fork, go to _Secrets and variables_, and _Actions_. Create a secret named `GH_APP_PRIVATE_KEY` with your GitHub App private key (the content of the `.pem` file) and a variable named `GH_APP_ID` with the GitHub App id as the value.
+Lastly, in the settings of your fork, go to _Secrets and variables_, and _Actions_. Create a secret named `GH_APP_PRIVATE_KEY` with your GitHub App private key (the content of the `.pem` file) and two variables named `GH_APP_ID` and `GH_APP_INSTALLATION_ID` with the GitHub App id and installation id as values
+
+> [!TIP]
+> You can find the installation id from the settings of your organization or repo, in _Third-party Access_, and _GitHub Apps_. Click on _Configure_ next to your app and you'll find the installation id in the URL.
 
 ### Connect GitHub with Azure
 To grant access to your Azure subscription to the GitHub Action runners, you need to create a service principal with the _owner_ role to your subscription (or _contributor_ and _user access administrator_ roles).  
@@ -56,16 +59,21 @@ The first workflow to run is `Deploy prerequisites` from the Actions tab in your
 - A Container Apps environment
 - A Container registry
 - A Log Analytics workspace
+- A Key Vault containing the GitHub App private key
+- A user-assigned Managed Identity with pull access to the registry and secret user access on the Key Vault
 
 It will also build a container image from the Dockerfile [here](/src/Dockerfile.from-base) which is based on the work from this great [repo](https://github.com/myoung34/docker-github-actions-runner) and push it to your registry with the tag `runners/github/linux:from-base`.  
 
 Lastly it sets a few deployment outputs as variables so that the next workflow can re-use them.
 
+> [!NOTE]
+> The workflow generates an access token using the GitHub App to create variables to store values for the next workflow.
+
 ## Deploy the runners
-Next workflow to run is `Create and register self-hosted runners`. This one generates an access token as the GitHub App, and pass it as an input to a Bicep deployment. This deployment provisions the Container App inside the Container Apps Environment, using the container image built and pushed by the previous workflow.
+Next workflow to run is `Create and register self-hosted runners`. This one uses Bicep to deploy a Container App (Job) in the Container App Environment, using the container image built and pushed by the previous workflow.
 
 > [!NOTE]
-> The previous workflow also generates an access token but it's less noticeable, it's a short-lived token for setting the variables
+> The deployment is split in two parts as the Container App (Job) needs a container image already pushed to a Container Registry. A single workflow could have been used but would take too long to execute. 
 
 When you launch the workflow, you can choose between deploying a Container App or a Container App Job. The job is used by default as it's a better fit for this scenario.
 

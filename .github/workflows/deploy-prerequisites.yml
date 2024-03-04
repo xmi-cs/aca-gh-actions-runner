@@ -6,7 +6,7 @@ on:
 permissions:
   id-token: write
   contents: read
-    
+
 jobs:
   deploy-prerequisites:
     runs-on: ubuntu-latest
@@ -17,10 +17,10 @@ jobs:
       ARM_USE_OIDC: true
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v1.6.1
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
@@ -28,7 +28,7 @@ jobs:
 
       - name: Bicep deploy
         id: bicep-deploy
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           scope: subscription
           subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
@@ -36,6 +36,7 @@ jobs:
           region: ${{ vars.AZURE_LOCATION }}
           parameters: >
             location=${{ vars.AZURE_LOCATION }}
+            gitHubAppKey="${{ secrets.GH_APP_PRIVATE_KEY }}"
           deploymentName: deploy-aca-gh-runners-dev-prerequisites
 
       - name: Generate access token
@@ -51,6 +52,8 @@ jobs:
           gh variable set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
           gh variable set ACR_NAME --body ${{ steps.bicep-deploy.outputs.acrName }}
           gh variable set ACA_ENV_NAME --body ${{ steps.bicep-deploy.outputs.acaEnvName }}
+          gh variable set ACA_MSI_NAME --body ${{ steps.bicep-deploy.outputs.acaMsiName }}
+          gh variable set GH_APP_PRIVATE_KEY_SECRET_URI --body ${{ steps.bicep-deploy.outputs.gitHubAppKeySecretUri }}          
         env:
           GITHUB_TOKEN: ${{ steps.generate-access-token.outputs.token }}
 
